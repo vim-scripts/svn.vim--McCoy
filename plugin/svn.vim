@@ -1,4 +1,4 @@
-" Simple SVN utility for vim.  0.001 
+" Simple SVN utility for vim.  0.001001 
 " tag@cpan.org
 
 " This is basically a very simple wrapper to calling svn commands.
@@ -10,9 +10,9 @@
 " has no terminal.
 
 if exists("$SVN_EDITOR")
-    let SvnEditor = $SVN_EDITOR
+    let g:SvnEditor = $SVN_EDITOR
 else     
-    let SvnEditor = "ed"
+    let g:SvnEditor = "ed"
 endif
 
 com! -nargs=* SVN call SvnMain(<f-args>)
@@ -22,7 +22,7 @@ com! -nargs=* Update call SvnUpdate()
 
 fu! SvnCommit()
     w
-    exe "! EDITOR=" . SvnEditor . " svn commit"
+    exe "! EDITOR=" . g:SvnEditor . " svn commit"
     ! svn update
 endfunction
 
