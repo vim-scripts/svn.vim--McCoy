@@ -19,6 +19,17 @@ com! -nargs=* SVN call SvnMain(<f-args>)
 com! -nargs=* Svn call SvnMain(<f-args>)
 com! -nargs=* Commit call SvnCommit()
 com! -nargs=* Update call SvnUpdate()    
+com! -nargs=* Add call SvnAdd()
+
+fu! SvnAdd(...)
+    w
+    if a:0 == 0
+        exe "! svn add %"
+    else
+        let filename = a:1
+        exe "! svn add " . filename
+    endif
+endfunction    
 
 fu! SvnCommit()
     w
@@ -33,7 +44,7 @@ endfunction
 fu! SvnMain(...)
     if a:0 != 0
         let svn_c = a:1
-        echomsg "You entered " . svn_c 
+
         if svn_c == "commit"
             call SvnCommit()
         
@@ -46,6 +57,12 @@ fu! SvnMain(...)
             endif    
         elseif svn_c == "update"
             call SvnUpdate()
+        elseif svn_c == "add"
+            if a:0 > 1
+                call SvnAdd(a:2)
+            else
+                call SvnAdd()
+            endif
         else
             let i = a:0
             let svn_c = ""
