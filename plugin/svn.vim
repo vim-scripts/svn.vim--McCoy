@@ -1,5 +1,5 @@
 " vim600: set foldmethod=marker:
-" Simple SVN utility for vim.  0.002
+" Simple SVN utility for vim.  0.003001
 " tag@cpan.org
 
 " svn.vim - Relatively simple script for interacting with SVN. 
@@ -18,7 +18,7 @@ let g:svnVersion = 0.002
 " Section: Command Registers {{{
 com! -nargs=* SVN       call SvnMain(<f-args>)
 com! -nargs=* Svn       call SvnMain(<f-args>)
-com! -nargs=* Commit    call SvnCommit()
+com! -nargs=* Commit    call SvnCommit(<f-args>)
 com! -nargs=* Update    call SvnUpdate()    
 com! -nargs=* Add       call SvnAdd()
 com! -nargs=* Log       call SvnLog()    
@@ -56,8 +56,8 @@ fu! SvnAdd(...)
     endif
 endfunction    
 
-fu! SvnCommit()
-    windo new
+fu! SvnCommit(...)
+    new
 
     silent! r!svn status | grep -vE '^\?'
 
