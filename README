@@ -1,0 +1,11 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=743
+
+A simple utility for using SVN within vim.  Mostly just aliases for combining writing your file, commiting and updating your repository within vim.  I use gvim, so the default editor ``Commit'' or ``Svn commit'' doesn't work.  For this reason, with a little bit of trickery I made my system open up the log addition inline.  This means with two simple commands, you've written your current file, commited your repository, and updated your changes...without leaving your vim window :)
+
+You can also do this with key mappings, so makes it even easier.
+
+Its still somewhat primative, though its coming along.
+Check back frequently for updates.
+Suggestions and Patches are always welcome!
+
+Happy Vimming!
