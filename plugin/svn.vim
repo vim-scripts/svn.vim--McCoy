@@ -1,22 +1,21 @@
+" vim600: set foldmethod=marker:
 " Simple SVN utility for vim.  0.002
 " tag@cpan.org
 
-" This is basically a very simple wrapper to calling svn commands.
-" I mostly use it so I can :Commit instead of :w :!svn commit :!svn update
-" I use 'ed' as my editor when doing svn commit, since I do it from gvim and
-" I dont know if you've ever tried gvim -c ':!vim' but it aint pretty :)
-" Yes I know I could use vi but its actually harder to use than ed, in that
-" enviroment.  %p is so much easier than the hell elvis puts me through when it
-" has no terminal.
+" svn.vim - Relatively simple script for interacting with SVN. 
+" ----------------------------------------------------------------------------
+" "THE BEER-WARE LICENSE" (Revision 43) borrowed from FreeBSD's jail.c:
+" <tag@cpan.org> wrote this file.  As long as you retain this notice you
+" can do whatever you want with this stuff. If we meet some day, and you think
+" this stuff is worth it, you can buy me a beer in return.   Scott S. McCoy
+" ----------------------------------------------------------------------------
+"  See doc/svn.txt for documentation
 
-let g:MidCommit = 0
 
-if exists("$SVN_EDITOR")
-    let g:SvnEditor = $SVN_EDITOR
-else     
-    let g:SvnEditor = "ed"
-endif
+let g:CommitWindow = 0
+let g:svnVersion = 0.002
 
+" Section: Command Registers {{{
 com! -nargs=* SVN       call SvnMain(<f-args>)
 com! -nargs=* Svn       call SvnMain(<f-args>)
 com! -nargs=* Commit    call SvnCommit()
@@ -24,6 +23,22 @@ com! -nargs=* Update    call SvnUpdate()
 com! -nargs=* Add       call SvnAdd()
 com! -nargs=* Log       call SvnLog()    
 com! -nargs=* Complete  call SvnComplete()    
+
+" }}}
+" Section: KeyMappings {{{
+
+if exists("$VIM_SVN_KEY")
+    let maplocalleader = $VIM_SVN_KEY
+endif
+
+map <Leader><LocalLeader>c :Svn commit<CR>
+map <Leader><LocalLeader>C :Svn complete<CR>
+map <Leader><LocalLeader>u :Svn update<CR>
+map <Leader><LocalLeader>l :Svn log<CR>
+map <Leader><LocalLeader>a :Svn add<CR>
+
+" }}}
+" Section: Handling Routines {{{
 
 fu! SvnLog()
     windo new
@@ -51,25 +66,32 @@ fu! SvnCommit()
     0
 
     echo "use :Complete to finish"
-    let g:MidCommit = 1
+    let g:CommitWindow = winnr()
 endfunction
 
 fu! SvnComplete()
-    call append(0,"#!/bin/sh")
-    call append(1, "cat <<SVN > $1")
-    call cursor(5000000, 0)
-    call append(line("."), "SVN")
-    w svnedit.sh
-    silent! ! chmod 755 svnedit.sh;EDITOR=$PWD/svnedit.sh svn commit;rm svnedit.sh;svn update
-    close!
+    if winnr() == g:CommitWindow
+        call append(0,"#!/bin/sh")
+        call append(1, "cat <<SVN > $1")
+        call cursor(5000000, 0)
+        call append(line("."), "SVN")
+        w svnedit.sh
+        silent! ! chmod 755 svnedit.sh;EDITOR=$PWD/svnedit.sh svn commit;rm svnedit.sh;svn update
+        close!
+        let g:CommitWindow = 0
 
-    let g:MidCommit = 0
+    else
+        echoerr "Not currently in a commit window!"
+    endif    
 endfunction
     
 
 fu! SvnUpdate()
     ! svn update
 endfunction    
+
+" }}}
+" Section: Main SVN Handler {{{
 
 fu! SvnMain(...)
     if a:0 != 0
@@ -92,6 +114,9 @@ fu! SvnMain(...)
         elseif svn_c == "log"
             call SvnLog()
 
+        elseif svn_c == "complete"
+            call SvnComplete()
+
         elseif svn_c == "add"
             if a:0 > 1
                 call SvnAdd(a:2)
@@ -99,6 +124,9 @@ fu! SvnMain(...)
                 call SvnAdd()
             endif
 
+        elseif svn_c == "help"
+            help svn
+        
         else
             let i = a:0
             let svn_c = ""
@@ -114,3 +142,5 @@ fu! SvnMain(...)
         echomsg "Usage: SVN <command> same as bin/svn"
     endif
 endfunction    
+
+" }}}
