@@ -41,7 +41,7 @@ map <Leader><LocalLeader>a :Svn add<CR>
 " Section: Handling Routines {{{
 
 fu! SvnLog()
-    windo new
+    new
     r!svn log
     0
 endfunction

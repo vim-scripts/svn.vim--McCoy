@@ -7,7 +7,7 @@ inside Vim.
 Author:  Scott McCoy <tag@cpan.org> 
 
 ==============================================================================
-1. Contents						*cvscommand-contents*
+1. Contents						       *svn-contents*
 
 	Installation        : |svn-install|
 	svn.vim Intro       : |svn|
